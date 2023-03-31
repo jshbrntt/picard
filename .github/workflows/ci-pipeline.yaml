@@ -1,7 +1,17 @@
 name: CI Pipeline
-on: [push]
+
+on:
+  push
+
+env:
+  DEBUG: 1
+
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - run: make test
+  cache:
+    runs-on: ubuntu-latest
+    steps:
+      - run: make push

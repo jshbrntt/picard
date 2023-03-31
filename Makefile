@@ -10,7 +10,7 @@ CWD_BASENAME := $(notdir $(CWD_PATH))
 PROJECT ?= example
 PROJECT_PATH ?= $(CWD_PATH)/$(PROJECT)
 WORKING_DIRECTORY ?= /usr/src/$(notdir $(PROJECT_PATH))
-IMAGE_NAME ?= picard
+IMAGE_NAME ?= picard/example
 IMAGE_TAG ?= latest
 SERVICE ?= project
 REGISTRY_HOSTNAME ?= ghcr.io
@@ -21,9 +21,11 @@ DOCKER ?= docker
 DOCKER_COMPOSE ?= $(DOCKER) compose --file docker-compose.yaml --file docker-compose.$(if $(CI),ci,dev).yaml
 DOCKER_SCAN ?=
 
-DOCKER_REGISTRY_USERPASS := $(subst :, ,$(DOCKER_REGISTRY_AUTH))
-DOCKER_REGISTRY_USERNAME := $(word 1,$(DOCKER_REGISTRY_USERPASS))
-DOCKER_REGISTRY_PASSWORD := $(word 2,$(DOCKER_REGISTRY_USERPASS))
+ifdef CI
+	DOCKER_REGISTRY_URL := ghcr.io
+	DOCKER_REGISTRY_USERNAME := $(GITHUB_ACTOR)
+	DOCKER_REGISTRY_PASSWORD := $(GITHUB_TOKEN)
+endif
 
 # https://www.gnu.org/software/make/manual/html_node/Special-Targets.html
 .ONESHELL:
