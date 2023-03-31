@@ -2,7 +2,7 @@
 DEBUG ?=
 
 ifdef DEBUG
-MAKECMDGOALS += debug
+MAKECMDGOALS := debug $(MAKECMDGOALS)
 endif
 MAKEFLAGS += --no-print-directory$(if $(DEBUG), --debug)
 CWD_PATH := $(realpath .)
