@@ -1,5 +1,7 @@
+const process = requiore("node:process");
+
 function main() {
-  console.log("Hello world!");
+  console.log(`Hello ${process.env.CI ? "CI" : "world"}!`);
 }
 
 if (require.main === module) {
