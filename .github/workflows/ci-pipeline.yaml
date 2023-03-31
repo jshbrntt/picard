@@ -7,6 +7,10 @@ env:
   DEBUG: 1
 
 jobs:
+  checkout:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
   test:
     runs-on: ubuntu-latest
     steps:
