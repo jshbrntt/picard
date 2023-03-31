@@ -1,0 +1,7 @@
+version: '3.8'
+
+services:
+  project:
+    stdin_open: true
+    volumes:
+      - ${PROJECT_PATH}:/${WORKING_DIRECTORY}
