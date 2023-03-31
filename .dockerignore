@@ -2,4 +2,4 @@
 **
 
 # Explicitly include files in build context
-# !src/
+!src
