@@ -10,7 +10,7 @@ CWD_BASENAME := $(notdir $(CWD_PATH))
 PROJECT ?= example
 PROJECT_PATH ?= $(CWD_PATH)/$(PROJECT)
 WORKING_DIRECTORY ?= /usr/src/$(notdir $(PROJECT_PATH))
-IMAGE_NAME ?= picard/example
+IMAGE_NAME ?= jshbrntt/picard
 IMAGE_TAG ?= latest
 SERVICE ?= project
 REGISTRY_HOSTNAME ?= ghcr.io
@@ -67,7 +67,7 @@ config:
 debug: config
 
 .PHONY: push
-push:
+push: $(if $(CI),login)
 	$(DOCKER_COMPOSE) push $(SERVICE)
 
 .PHONY: required-common-variables
