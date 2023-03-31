@@ -7,15 +7,12 @@ env:
   DEBUG: 1
 
 jobs:
-  checkout:
+  ci:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - run: make test
-  cache:
-    runs-on: ubuntu-latest
-    steps:
-      - run: make push
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Test
+        run: make test
+      - name: Push
+        run: make push
