@@ -1,0 +1,9 @@
+ifndef PICARD_LOG_MODULE
+PICARD_LOG_MODULE := 1
+
+PICARD_LOG_PREFIX := picard
+PICARD_LOG_INFO = $(if $(PICARD_DEBUG),$(info $(PICARD_LOG_PREFIX) [info]: $1))
+PICARD_LOG_WARNING = $(warning $(PICARD_LOG_PREFIX) [warning]: $1)
+PICARD_LOG_ERROR = $(error $(PICARD_LOG_PREFIX) [error]: $1)
+
+endif
