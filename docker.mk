@@ -66,7 +66,7 @@ fix-permissions:
 	chown -R $(WORKSPACE_UID):$(WORKSPACE_GID) .
 
 # Set default working directory inside container.
-WORKSPACE_USER := $(shell whoami)
+WORKSPACE_USER ?= $(shell whoami)
 WORKDIR ?= $(addprefix /,$(call list_join,/,home $(WORKSPACE_USER) $(PROJECT_NAME)))
 
 .PHONY: docker-run
