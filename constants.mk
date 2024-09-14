@@ -15,7 +15,7 @@ SPACE := $(EMPTY) $(EMPTY)
 CWD_PATH := $(realpath .)
 
 # Current working directory basename.
-CWD_BASENAME := $(notdir $(CWD_PATH))
+CWD_BASENAME := $(call notdirx,$(CWD_PATH))
 
 # Project name derived from root directory name.
 PROJECT_NAME := $(call lowercase,$(CWD_BASENAME))

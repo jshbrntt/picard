@@ -78,7 +78,7 @@ docker-run: $(RUN_DEPS)
 docker-run: RUN_OPTIONS += --interactive
 docker-run: RUN_OPTIONS += --tty
 docker-run: RUN_OPTIONS += --rm
-docker-run: RUN_OPTIONS += --volume $(CWD_PATH):$(WORKDIR)
+docker-run: RUN_OPTIONS += --volume "$(CWD_PATH):$(WORKDIR)"
 docker-run: RUN_OPTIONS += --workdir $(WORKDIR)
 docker-run:
 	$(DOCKER) run $(RUN_OPTIONS) $(IMAGE) $(COMMAND)

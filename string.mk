@@ -56,4 +56,8 @@ string_equal = $(if $(subst $1,,$2),$(EMPTY),1)
 string_less = $(call string_equal,$(word 1,$(sort $1 $2)),$1)
 string_greater = $(call string_equal,$(word 1,$(sort $1 $2)),$2)
 
+space_to_question_mark = $(subst $(EMPTY) ,?,$1)
+question_to_space_mark = $(subst ?, ,$1)
+notdirx = $(call question_to_space_mark,$(notdir $(call space_to_question_mark,$1)))
+
 endif
