@@ -44,7 +44,6 @@ docker-build: BUILD_OPTIONS += $(call join, ,$(addprefix --build-arg ,$(BUILD_AR
 docker-build: $(if $(NO_CACHE),$(eval BUILD_OPTIONS += --no-cache))
 docker-build: BUILD_OPTIONS += --target $(IMAGE_TARGET)
 docker-build: BUILD_OPTIONS += --tag $(IMAGE)
-docker-build: docker-pull
 docker-build:
 	$(DOCKER) build $(BUILD_OPTIONS) .
 
@@ -70,7 +69,7 @@ WORKSPACE_USER ?= $(shell whoami)
 WORKDIR ?= $(addprefix /,$(call list_join,/,home $(WORKSPACE_USER) $(PROJECT_NAME)))
 
 .PHONY: docker-run
-docker-run: RUN_DEPS += docker-pull
+docker-run: $(if $(SKIP_PULL),,$(eval RUN_DEPS += docker-pull))
 docker-run: $(if $(SKIP_BUILD),,$(eval RUN_DEPS += docker-build))
 docker-run: $(if $(CI),$(eval RUN_DEPS += docker-push))
 docker-run: $(if $(CI),$(eval RUN_DEPS += fix-permissions))
