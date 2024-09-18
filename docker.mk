@@ -35,7 +35,7 @@ IMAGE ?= $(IMAGE_PATH):$(IMAGE_TAG)
 docker-login: env-REGISTRY_USERNAME
 docker-login: env-REGISTRY_PASSWORD
 docker-login:
-	@echo $(REGISTRY_PASSWORD) | $(DOCKER) login --password-stdin --username $(REGISTRY_USERNAME) $(DOCKER_REGISTRY_URL)
+	@echo $(REGISTRY_PASSWORD) | $(DOCKER) login $(REGISTRY_HOSTNAME) --username $(REGISTRY_USERNAME) --password-stdin 
 
 BUILD_ARGS ?= BUILDKIT_INLINE_CACHE=1
 
