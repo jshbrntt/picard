@@ -79,6 +79,7 @@ docker-run: $(if $(CI),,$(eval RUN_OPTIONS += --tty))
 docker-run: RUN_OPTIONS += --rm
 docker-run: RUN_OPTIONS += --volume "$(CWD_PATH):$(WORKDIR)"
 docker-run: RUN_OPTIONS += --workdir $(WORKDIR)
+docker-run: $(if $(CI),$(eval RUN_OPTIONS += --user $(shell id -u):$(shell id -g)))
 docker-run:
 	$(DOCKER) run $(RUN_OPTIONS) $(IMAGE) $(COMMAND)
 
