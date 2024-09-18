@@ -4,6 +4,7 @@ PICARD_CHECK_DOCKER_MODULE := 1
 RELATIVE_PATH := $(patsubst %/,%,$(dir $(lastword $(MAKEFILE_LIST))))
 
 include $(RELATIVE_PATH)/version.mk
+include $(RELATIVE_PATH)/list.mk
 
 # Ensure supported docker version is available.
 UNSUPPORTED_DOCKER_VERSION := 24.0.0
@@ -18,6 +19,11 @@ $(if $(DOCKER_VERSION),,$(call PICARD_LOG_ERROR,unable to test docker version (n
 
 DOCKER_VERSION_GREATER_EQUAL := $(call version_greater_equal,$(DOCKER_VERSION),$(SUPPORTED_DOCKER_VERSION))
 DOCKER_VERSION_LESS := $(call version_less,$(DOCKER_VERSION),$(UNSUPPORTED_DOCKER_VERSION))
+
+DOCKER_BUILDX_INSPECT := $(shell DEBUG=1 docker buildx inspect)
+DOCKER_CACHE_EXPORT := $(findstring true,$(word $(shell expr $(call list_index_of,Cache,$(DOCKER_BUILDX_INSPECT)) + 2),$(DOCKER_BUILDX_INSPECT)))
+$(if $(DOCKER_CACHE_EXPORT),,$(call PICARD_LOG_ERROR,docker: cache export not supported (enable containerd image store, or use a different driver)))
+# docker info -f '{{ .DriverStatus }}'
 
 $(if $(DOCKER_VERSION_GREATER_EQUAL),,$(call PICARD_LOG_ERROR,docker: minimum required version: $(SUPPORTED_DOCKER_VERSION) (found: $(DOCKER_VERSION))))
 $(if $(DOCKER_VERSION_LESS),,$(call PICARD_LOG_WARNING,docker: expected version below: $(UNSUPPORTED_DOCKER_VERSION) (found: $(DOCKER_VERSION))))
