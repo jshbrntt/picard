@@ -40,6 +40,7 @@ docker-login:
 BUILD_ARGS ?= BUILDKIT_INLINE_CACHE=1
 
 .PHONY: docker-build
+docker-build: $(if $(CI),docker-login)
 docker-build: BUILD_OPTIONS += $(call join, ,$(addprefix --build-arg ,$(BUILD_ARGS)))
 docker-build: $(if $(NO_CACHE),$(eval BUILD_OPTIONS += --no-cache))
 docker-build: $(if $(CI),$(eval BUILD_OPTIONS += --push))
@@ -72,7 +73,6 @@ WORKSPACE_USER ?= $(shell whoami)
 WORKDIR ?= $(addprefix /,$(call list_join,/,home $(WORKSPACE_USER) $(PROJECT_NAME)))
 
 .PHONY: docker-run
-docker-run: RUN_DEPS += docker-pull
 docker-run: $(if $(SKIP_BUILD),,$(eval RUN_DEPS += docker-build))
 docker-run: $(if $(CI),$(eval RUN_DEPS += fix-permissions))
 docker-run: $(RUN_DEPS)
