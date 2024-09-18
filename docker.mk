@@ -9,8 +9,6 @@ include $(RELATIVE_PATH)/list.mk
 
 # Base Docker command.
 DOCKER ?= docker
-# Force caching of all layers, even in multi-stage builds.
-BUILDKIT_INLINE_CACHE ?= 1
 # Force plain build log.
 export BUILDKIT_PROGRESS ?= plain
 # Force buildkit.
@@ -37,7 +35,7 @@ docker-login: env-REGISTRY_PASSWORD
 docker-login:
 	@echo $(REGISTRY_PASSWORD) | $(DOCKER) login $(REGISTRY_HOSTNAME) --username $(REGISTRY_USERNAME) --password-stdin 
 
-BUILD_ARGS ?= BUILDKIT_INLINE_CACHE=1
+BUILD_ARGS ?=
 
 .PHONY: docker-build
 docker-build: $(if $(CI),docker-login)
