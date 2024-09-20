@@ -40,9 +40,9 @@ BUILD_ARGS ?=
 .PHONY: docker-build
 docker-build: $(if $(CI),docker-login)
 docker-build: BUILD_OPTIONS += $(call join, ,$(addprefix --build-arg ,$(BUILD_ARGS)))
-docker-build: $(if $(NO_CACHE),$(eval BUILD_OPTIONS += --no-cache))
-docker-build: $(if $(CI),$(eval BUILD_OPTIONS += --push))
-docker-build: $(if $(CI),$(eval BUILD_OPTIONS += --cache-to type=registry,ref=$(IMAGE),mode=max))
+docker-build: BUILD_OPTIONS += $(if $(NO_CACHE),--no-cache)
+docker-build: BUILD_OPTIONS += $(if $(CI),--push)
+docker-build: BUILD_OPTIONS += $(if $(CI),--cache-to type=registry$(,)ref=$(IMAGE)$(,)mode=max)
 docker-build: BUILD_OPTIONS += --cache-from type=registry,ref=$(IMAGE)
 docker-build: BUILD_OPTIONS += --target $(IMAGE_TARGET)
 docker-build: BUILD_OPTIONS += --tag $(IMAGE)
@@ -71,21 +71,21 @@ WORKSPACE_USER ?= $(shell whoami)
 WORKDIR ?= $(addprefix /,$(call list_join,/,home $(WORKSPACE_USER) $(PROJECT_NAME)))
 
 .PHONY: docker-run
-docker-run: $(if $(SKIP_BUILD),,$(eval RUN_DEPS += docker-build))
-docker-run: $(if $(CI),$(eval RUN_DEPS += fix-permissions))
+docker-run: RUN_DEPS += $(if $(SKIP_BUILD),,docker-build)
+docker-run: RUN_DEPS += $(if $(CI),fix-permissions)
 docker-run: $(RUN_DEPS)
 docker-run: RUN_OPTIONS += --interactive
-docker-run: $(if $(CI),,$(eval RUN_OPTIONS += --tty))
+docker-run: RUN_OPTIONS += $(if $(CI),,--tty)
 docker-run: RUN_OPTIONS += --rm
 docker-run: RUN_OPTIONS += --volume "$(CWD_PATH):$(WORKDIR)"
 docker-run: RUN_OPTIONS += --workdir $(WORKDIR)
-docker-run: $(if $(CI),$(eval RUN_OPTIONS += --user $(shell id -u):$(shell id -g)))
+docker-run: RUN_OPTIONS += $(if $(CI),--user $(shell id -u):$(shell id -g))
 docker-run:
 	$(DOCKER) run $(RUN_OPTIONS) $(IMAGE) $(COMMAND)
 
 .PHONY: docker-exec
 docker-exec: EXEC_OPTIONS += --interactive
-docker-exec: $(if $(CI),,$(eval EXEC_OPTIONS += --tty))
+docker-exec: EXEC_OPTIONS += $(if $(CI),,--tty)
 docker-exec:
 	$(DOCKER) exec $(EXEC_OPTIONS) $(CONTAINER_NAME) $(COMMAND)
 
