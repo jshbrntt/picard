@@ -25,9 +25,13 @@ IMAGE_TARGET ?=
 IMAGE_PARTS = $(REGISTRY_HOSTNAME) $(REGISTRY_NAMESPACE) $(IMAGE_NAME) $(subst _,/,$(IMAGE_TARGET))
 IMAGE_PATH = $(call list_join,/,$(IMAGE_PARTS))
 IMAGE_TAG ?= latest
+CACHE_IMAGE_PARTS = $(IMAGE_PARTS) cache
+CACHE_IMAGE_PATH = $(call list_join,/,$(CACHE_IMAGE_PARTS))
+CACHE_IMAGE_TAG ?= latest
 
 # Docker image name.
 IMAGE ?= $(IMAGE_PATH):$(IMAGE_TAG)
+CACHE_IMAGE ?= $(CACHE_IMAGE_PATH):$(CACHE_IMAGE_TAG)
 
 .PHONY: docker-login
 docker-login: env-REGISTRY_USERNAME
@@ -42,8 +46,8 @@ docker-build: $(if $(CI),docker-login)
 docker-build: BUILD_OPTIONS += $(call join, ,$(addprefix --build-arg ,$(BUILD_ARGS)))
 docker-build: BUILD_OPTIONS += $(if $(NO_CACHE),--no-cache)
 docker-build: BUILD_OPTIONS += $(if $(CI),--push)
-docker-build: BUILD_OPTIONS += $(if $(CI),--cache-to type=registry$(,)ref=$(IMAGE)$(,)mode=max)
-docker-build: BUILD_OPTIONS += --cache-from type=registry,ref=$(IMAGE)
+docker-build: BUILD_OPTIONS += $(if $(CI),--cache-to type=registry$(,)ref=$(CACHE_IMAGE)$(,)mode=max)
+docker-build: BUILD_OPTIONS += --cache-from type=registry,ref=$(CACHE_IMAGE)
 docker-build: BUILD_OPTIONS += --target $(IMAGE_TARGET)
 docker-build: BUILD_OPTIONS += --tag $(IMAGE)
 docker-build:
