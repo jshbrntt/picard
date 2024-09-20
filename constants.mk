@@ -11,6 +11,9 @@ EMPTY :=
 # Space value.
 SPACE := $(EMPTY) $(EMPTY)
 
+# Comma value.
+, := ,
+
 # Current working directory path relative to this file.
 CWD_PATH := $(realpath .)
 
