@@ -71,9 +71,8 @@ WORKSPACE_USER ?= $(shell whoami)
 WORKDIR ?= $(addprefix /,$(call list_join,/,home $(WORKSPACE_USER) $(PROJECT_NAME)))
 
 .PHONY: docker-run
-docker-run: RUN_DEPS += $(if $(SKIP_BUILD),,docker-build)
-docker-run: RUN_DEPS += $(if $(CI),fix-permissions)
-docker-run: $(RUN_DEPS)
+docker-run: $(if $(SKIP_BUILD),,docker-build)
+docker-run: $(if $(CI),fix-permissions)
 docker-run: RUN_OPTIONS += --interactive
 docker-run: RUN_OPTIONS += $(if $(CI),,--tty)
 docker-run: RUN_OPTIONS += --rm
