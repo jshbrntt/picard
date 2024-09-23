@@ -33,13 +33,19 @@ CACHE_IMAGE_TAG ?= latest
 IMAGE ?= $(IMAGE_PATH):$(IMAGE_TAG)
 CACHE_IMAGE ?= $(CACHE_IMAGE_PATH):$(CACHE_IMAGE_TAG)
 
+WORKSPACE_UID ?= $(shell id -u)
+WORKSPACE_GID ?= $(shell id -g)
+
+# Set default working directory inside container.
+WORKDIR ?= $(addprefix /,$(call list_join,/,opt $(PROJECT_NAME)))
+
+BUILD_ARGS ?=
+
 .PHONY: docker-login
 docker-login: env-REGISTRY_USERNAME
 docker-login: env-REGISTRY_PASSWORD
 docker-login:
 	@echo $(REGISTRY_PASSWORD) | $(DOCKER) login $(REGISTRY_HOSTNAME) --username $(REGISTRY_USERNAME) --password-stdin 
-
-BUILD_ARGS ?=
 
 .PHONY: docker-build
 docker-build: $(if $(CI),docker-login)
@@ -65,14 +71,8 @@ docker-pull:
 
 # Ensure files checked out from SCM will be accessible inside container bind-mount.
 .PHONY: fix-permissions
-fix-permissions: WORKSPACE_UID = $(shell id -u)
-fix-permissions: WORKSPACE_GID = $(shell id -g)
 fix-permissions:
 	chown -R $(WORKSPACE_UID):$(WORKSPACE_GID) .
-
-# Set default working directory inside container.
-WORKSPACE_USER ?= $(shell whoami)
-WORKDIR ?= $(addprefix /,$(call list_join,/,home $(WORKSPACE_USER) $(PROJECT_NAME)))
 
 .PHONY: docker-run
 docker-run: $(if $(SKIP_BUILD),,docker-build)
@@ -82,7 +82,7 @@ docker-run: RUN_OPTIONS += $(if $(CI),,--tty)
 docker-run: RUN_OPTIONS += --rm
 docker-run: RUN_OPTIONS += --volume "$(CWD_PATH):$(WORKDIR)"
 docker-run: RUN_OPTIONS += --workdir $(WORKDIR)
-docker-run: RUN_OPTIONS += $(if $(CI),--user $(shell id -u):$(shell id -g))
+docker-run: RUN_OPTIONS += $(if $(CI),--user $(WORKSPACE_UID):$(WORKSPACE_GID))
 docker-run:
 	$(DOCKER) run $(RUN_OPTIONS) $(IMAGE) $(COMMAND)
 
