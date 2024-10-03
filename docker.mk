@@ -76,13 +76,13 @@ fix-permissions:
 
 .PHONY: docker-run
 docker-run: $(if $(SKIP_BUILD),,docker-build)
-docker-run: $(if $(CI),fix-permissions)
+docker-run: $(if $(or $(CI),$(LINUX)),fix-permissions)
 docker-run: RUN_OPTIONS += --interactive
 docker-run: RUN_OPTIONS += $(if $(CI),,--tty)
 docker-run: RUN_OPTIONS += --rm
 docker-run: RUN_OPTIONS += --volume "$(CWD_PATH):$(WORKDIR)"
 docker-run: RUN_OPTIONS += --workdir $(WORKDIR)
-docker-run: RUN_OPTIONS += $(if $(CI),--user $(WORKSPACE_UID):$(WORKSPACE_GID))
+docker-run: RUN_OPTIONS += $(if $(or $(CI),$(LINUX)),--user $(WORKSPACE_UID):$(WORKSPACE_GID))
 docker-run:
 	$(DOCKER) run $(RUN_OPTIONS) $(IMAGE) $(COMMAND)
 

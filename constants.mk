@@ -23,4 +23,7 @@ CWD_BASENAME := $(call notdirx,$(CWD_PATH))
 # Project name derived from root directory name.
 PROJECT_NAME := $(call lowercase,$(CWD_BASENAME))
 
+MACOS := $(if $(findstring Darwin,$(shell uname)),1)
+LINUX := $(if $(findstring Linux,$(shell uname)),1)
+
 endif
