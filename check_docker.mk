@@ -22,10 +22,11 @@ DOCKER_VERSION_LESS := $(call version_less,$(DOCKER_VERSION),$(UNSUPPORTED_DOCKE
 
 DOCKER_BUILDX_INSPECT := $(shell DEBUG=1 docker buildx inspect)
 DOCKER_CACHE_EXPORT := $(findstring true,$(word $(shell expr $(call list_index_of,Cache,$(DOCKER_BUILDX_INSPECT)) + 2),$(DOCKER_BUILDX_INSPECT)))
-$(if $(DOCKER_CACHE_EXPORT),,$(call PICARD_LOG_ERROR,docker: cache export not supported (enable containerd image store, or use a different driver)))
+DOCKER_ENABLE_CONTAINERD_URL := https://docs.docker.com/engine/storage/containerd/#enable-containerd-image-store-on-docker-engine
+$(if $(DOCKER_CACHE_EXPORT),,$(call PICARD_LOG_ERROR,docker: cache export not supported (enable containerd image store, or use a different driver)$(NEWLINE)$(DOCKER_ENABLE_CONTAINERD_URL)))
 # docker info -f '{{ .DriverStatus }}'
 
 $(if $(DOCKER_VERSION_GREATER_EQUAL),,$(call PICARD_LOG_ERROR,docker: minimum required version: $(SUPPORTED_DOCKER_VERSION) (found: $(DOCKER_VERSION))))
-$(if $(DOCKER_VERSION_LESS),,$(call PICARD_LOG_WARNING,docker: expected version below: $(UNSUPPORTED_DOCKER_VERSION) (found: $(DOCKER_VERSION))))
+$(if $(DOCKER_VERSION_LESS),,$(call PICARD_LOG_WARNING,docker: version available is untested and newer than expected: $(UNSUPPORTED_DOCKER_VERSION) (found: $(DOCKER_VERSION))))
 
 endif
